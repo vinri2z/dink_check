@@ -29,3 +29,8 @@ line-length = 88
 quote-style = "double"  # or "single"
 indent-style = "space"
 line-ending = "auto"
+
+[dependency-groups]
+dev = [
+    "pytest>=9.0.3",
+]
