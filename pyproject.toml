@@ -1,3 +1,21 @@
+[project]
+name = "book-volley-field"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "pydantic>=2.13.4",
+    "python-dotenv>=1.2.2",
+    "requests>=2.34.2",
+]
+
+
+[tool.uv]
+# Use uv-managed CPython; the local pyenv 3.12.9 build lacks the _blake2
+# extension and emits "unsupported hash type blake2b/blake2s" errors.
+python-preference = "only-managed"
+
 [tool.ruff]
 line-length = 88
 

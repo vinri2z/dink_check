@@ -9,17 +9,20 @@ class Slot(BaseModel):
     price: float
 
 
-# Model for the Availability object
-class VolleyField(BaseModel):
+# Model for the nested location object on each availability
+class Location(BaseModel):
     id: str
     name: str
+
+
+# Model for the Availability object (now grouped by location)
+class VolleyField(BaseModel):
+    location: Location
     slots: List[Slot]
 
 
 # Model for the main response
 class ApiResponse(BaseModel):
-    overDailyQuota: bool
-    overWeeklyQuota: bool
     availabilities: List[VolleyField]
 
 

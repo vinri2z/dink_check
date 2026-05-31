@@ -86,14 +86,16 @@ To ensure the MITM proxy works correctly, you need to trust the certificate on y
 
 Once the proxy is active and the certificate is installed, open the Dink app and log in. In the `mitmweb` interface, look for an API call with an `Authorization: Bearer` header.
 
-### 7. Copy the Bearer Token
+### 7. Copy the Bearer Token and Fingerprint
 
-- Find a request to an authenticated endpoint (e.g., `/api/user`).
-- Copy the `Authorization` header value.
-- Paste it into your `.env` file as `BEARER_TOKEN`.
+- Find a request to an authenticated endpoint (e.g., `/api/reservations/availabilities`).
+- Copy the `Authorization` header value (the part after `Bearer `).
+- Copy the `X-Fingerprint` header value from the same request.
+- Paste them into your `.env` file:
 
 ```env
 BEARER_TOKEN=your_token_here
+FINGERPRINT=your_x_fingerprint_here
 ```
 
-You're now ready to run the script!
+Both values must come from the **same** request in mitmweb. The token expires quickly, so refresh both when you get auth errors.
