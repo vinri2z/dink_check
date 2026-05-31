@@ -98,4 +98,23 @@ BEARER_TOKEN=your_token_here
 FINGERPRINT=your_x_fingerprint_here
 ```
 
-Both values must come from the **same** request in mitmweb. The token expires quickly, so refresh both when you get auth errors.
+Both values must come from the **same** request in mitmweb. Access tokens expire after about 30 minutes.
+
+### 8. Automatic token refresh (optional)
+
+See [docs/auth-refresh.md](docs/auth-refresh.md) for full details.
+
+**Option A — API refresh (after mitmweb recon):** capture the app login/refresh `POST` URL and set in `.env`:
+
+```env
+DINK_REFRESH_URL=https://dink.social/api/...
+REFRESH_TOKEN=...
+```
+
+**Option B — mitmweb session capture (works without a refresh API):** keep the Dink app open on your phone while the bot runs:
+
+```bash
+mitmweb -s scripts/capture_dink_session.py
+```
+
+The addon writes `.dink_session.json`; the bot reloads it when the token is about to expire or after a `401 INVALID_TOKEN`.

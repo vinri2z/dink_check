@@ -2,6 +2,7 @@ venv
 
 .env*
 !.env.example
+.dink_session.json
 
 __pycache__/
 .ruff_cache/
