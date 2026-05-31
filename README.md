@@ -6,8 +6,9 @@ This is a simple Python script to **automatically book a field** on [Dink](https
 
 ## ⚙️ Requirements
 
-- Python 3.8+
-- `./install.sh` sets up everything you need (virtual environment, dependencies, etc.)
+- Python 3.12+
+- [uv](https://docs.astral.sh/uv/) (`brew install uv`)
+- `./install.sh` runs `uv sync` to install dependencies and the package
 
 ---
 
@@ -26,7 +27,13 @@ This is a simple Python script to **automatically book a field** on [Dink](https
 
 3. **Run the script**
    ```bash
-   python main.py
+   uv run dink-check
+   ```
+
+   Or via module:
+
+   ```bash
+   uv run python -m dink_check
    ```
    
 ---

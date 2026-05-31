@@ -6,7 +6,7 @@ from datetime import datetime, timedelta
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
-from auth import AuthSession, jwt_expiry
+from dink_check.auth import AuthSession, jwt_expiry
 
 
 def _make_jwt(*, exp: datetime) -> str:
@@ -59,7 +59,7 @@ class AuthSessionTests(unittest.TestCase):
             self.assertEqual(session.access_token, new_token)
             self.assertEqual(session.fingerprint, "new-fp")
 
-    @patch("auth.requests.post")
+    @patch("dink_check.auth.requests.post")
     def test_refresh_via_api(self, mock_post: MagicMock):
         new_token = _make_jwt(exp=datetime.now() + timedelta(minutes=30))
         mock_post.return_value = MagicMock(
