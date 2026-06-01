@@ -16,13 +16,13 @@ This is a simple Python script to **automatically book a field** on [Dink](https
 
 1. **Clone the repo**
    ```bash
-   git clone https://github.com/your-username/dink-reservation-bot.git
-   cd dink-reservation-bot
+   git clone https://github.com/dmri2z/dink_check.git
+   cd dink-check
    ```
 
 2. **Run the installer**
    ```bash
-   ./install.sh
+   uv sync
    ```
 
 3. **Run the script**
@@ -72,7 +72,7 @@ This will start a proxy server and open the web interface at `http://localhost:8
 On your phone:
 
 - Connect to the same Wi-Fi network.
-- Set the HTTP proxy to your computer’s IP address and port `8080`.
+- Set the HTTP proxy to your computer’s private IP address (find it inside your laptop's wifi settings) and port `8080`.
 
 ### 4. Install the MITM Certificate (on your iPhone)
 
