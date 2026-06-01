@@ -107,21 +107,35 @@ FINGERPRINT=your_x_fingerprint_here
 
 Both values must come from the **same** request in mitmweb. Access tokens expire after about 30 minutes.
 
+When booking, the bot sends `availabilities[].id` from each per-court entry (e.g. `PISTA 17`) as `field` on `POST /v2/reservations`. The API may occasionally return a venue-only row (`location` + `slots`); that `location.id` is not bookable—the bot skips it and stops if no court rows are present.
+
 ### 8. Automatic token refresh (optional)
 
 See [docs/auth-refresh.md](docs/auth-refresh.md) for full details.
 
-**Option A — API refresh (after mitmweb recon):** capture the app login/refresh `POST` URL and set in `.env`:
+**Option A — email/password (recommended):** the bot signs in to Dink's
+identity API and keeps the session alive on its own. Just set:
 
 ```env
-DINK_REFRESH_URL=https://dink.social/api/...
-REFRESH_TOKEN=...
+DINK_EMAIL=you@example.com
+DINK_PASSWORD=...
 ```
 
-**Option B — mitmweb session capture (works without a refresh API):** keep the Dink app open on your phone while the bot runs:
+It signs in via `POST /api/identity/auth/sign-in`, then rotates the refresh
+token via `POST /api/identity/auth/refresh`. `BEARER_TOKEN`/`FINGERPRINT` are
+optional bootstrap. Verify without the booking loop:
+
+```bash
+uv run dink-check-refresh
+```
+
+**Option B — mitmweb session capture (fallback / recon):** keep the Dink app
+open on your phone while running:
 
 ```bash
 mitmweb -s scripts/capture_dink_session.py
 ```
 
-The addon writes `.dink_session.json`; the bot reloads it when the token is about to expire or after a `401 INVALID_TOKEN`.
+The addon writes `.dink_session.json` (token + fingerprint, reloaded by the bot
+on expiry / `401 INVALID_TOKEN`) and `.dink_auth_capture.jsonl` (full auth-flow
+recon across `dink.social` + Firebase hosts).

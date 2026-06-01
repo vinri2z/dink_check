@@ -7,35 +7,84 @@ Captured tokens are RS256 JWTs issued by `dink` with ~30 minute lifetime (`exp -
 Example payload fields:
 
 - `sub` — user id
-- `fgp` — SHA-256 hash of the raw `x-fingerprint` header (not the header value itself)
+- `fgp` — fingerprint claim embedded in the JWT; **not** a plain `SHA256(x-fingerprint)` of the header value (the transform is unknown), so `x-fingerprint` must be captured from the app, not synthesized
 - `aud` — `mobile-app`
 - `iss` — `dink`
 
 Auth for booking APIs requires **both**:
 
 - `Authorization: Bearer <jwt>`
-- `x-fingerprint: <64-char hex>` (raw value from the same app request as the token)
+- `x-fingerprint: <64-char hex>` — **returned by the server** in the sign-in /
+  refresh response (it is not synthesized client-side; the bot just echoes the
+  value it was given back on every request).
 
-## Refresh endpoint recon (automated probing)
+## Confirmed auth flow (captured via mitmweb)
 
-Common paths were probed on `https://dink.social` (`/api/auth/refresh`, `/api/v2/auth/*`, `/api/oauth/token`, etc.). All returned **404**.
+The iOS app uses Dink's own identity API — **not** Firebase. Two endpoints
+matter:
 
-No public OpenID or mobile config endpoint was found. The login/refresh flow used by the iOS app must be captured with **mitmweb**.
+### Sign-in (email + password)
 
-## How to discover the real refresh/login call
+```
+POST https://dink.social/api/identity/auth/sign-in
+Content-Type: application/json
+(no Authorization, no x-fingerprint)
 
-1. Run `mitmweb` and proxy the phone.
-2. Filter flows to `dink.social`.
-3. Trigger token renewal:
-   - Kill the app, reopen after the JWT expires, log in again.
-   - Background the app 15+ minutes, foreground and open reservations.
-4. Look for `POST` requests whose response contains `token`, `access_token`, or `refresh_token`.
-5. Copy into `.env`:
-   - `DINK_REFRESH_URL` — full URL
-   - `REFRESH_TOKEN` — if the login response includes one
-   - Or `DINK_EMAIL` / `DINK_PASSWORD` if the endpoint is a credential login
+{"email": "<email>", "password": "<password>"}
+```
 
-Then set `DINK_REFRESH_BODY_STYLE` if needed (`refresh_token`, `refreshToken`, or `login`).
+Response:
+
+```json
+{"accessToken": "<jwt>", "refreshToken": "<jwt>", "fingerprint": "<64hex>", "clientType": "mobile"}
+```
+
+### Refresh (rotating refresh token)
+
+```
+POST https://dink.social/api/identity/auth/refresh
+Content-Type: application/json
+Authorization: Bearer <current jwt>   # may be expired; refreshToken is what counts
+x-fingerprint: <64hex>
+
+{"refreshToken": "<refresh jwt>"}
+```
+
+Response is the same shape as sign-in (a **new** `refreshToken` each time — the
+token rotates, so always persist the latest one).
+
+`/api/identity/auth/sign-out` revokes a refresh token (`{"refreshToken": ...}`).
+
+### How the bot keeps the session alive
+
+`AuthSession.refresh()` (in `src/dink_check/auth.py`):
+
+1. If a `REFRESH_TOKEN` is known → `POST /api/identity/auth/refresh`.
+2. On failure (or no refresh token) → `POST /api/identity/auth/sign-in` with
+   `DINK_EMAIL` / `DINK_PASSWORD`.
+
+So with just email + password the bot bootstraps and self-heals indefinitely;
+no periodic mitmweb capture is needed.
+
+### Configure `.env`
+
+```env
+DINK_EMAIL=you@example.com
+DINK_PASSWORD=...
+# endpoints default to the values below — override only if Dink changes them
+DINK_SIGNIN_URL=https://dink.social/api/identity/auth/sign-in
+DINK_REFRESH_URL=https://dink.social/api/identity/auth/refresh
+```
+
+### Verify refresh without the booking loop
+
+```bash
+uv run dink-check-refresh
+```
+
+The command logs current/new token expiry, renews via refresh→sign-in, then
+runs the keepalive probe (`DINK_PUSH_TOKEN` required for a definitive
+`valid`/`invalid` result).
 
 ## Session file fallback (no refresh API)
 
@@ -46,3 +95,15 @@ mitmweb -s scripts/capture_dink_session.py
 ```
 
 It writes `.dink_session.json` whenever the app calls `dink.social` with auth headers. The bot reloads that file when the token is expiring or after a `401 INVALID_TOKEN`.
+
+## Keepalive / validity probe
+
+`POST /api/users/push-token` registers the device's FCM push token. It is **not** an auth endpoint — it requires a valid `Authorization: Bearer` + `x-fingerprint` and does not return new tokens. The bot uses it as a lightweight server-side validity check.
+
+Configure in `.env`:
+
+- `DINK_PUSH_TOKEN` — the `pushToken` value from a captured app request (body field)
+- `DINK_PROBE_URL` — defaults to `https://dink.social/api/users/push-token`
+- `DINK_KEEPALIVE_INTERVAL` — seconds between probes during idle waits (default `300`)
+
+At startup the bot probes once; if the server rejects credentials it attempts refresh (session file / `DINK_REFRESH_URL`) before entering the booking loop. During long idle waits it re-probes periodically so server-side revocation is caught before the next availability poll.

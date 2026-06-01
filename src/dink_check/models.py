@@ -1,29 +1,48 @@
-from pydantic import BaseModel
-from typing import List, Literal
 from datetime import datetime
+from typing import Literal
+
+from pydantic import BaseModel, model_validator
 
 
-# Model for the Slot object
 class Slot(BaseModel):
     startAt: datetime
     price: float
 
 
-# Model for the nested location object on each availability
 class Location(BaseModel):
     id: str
     name: str
 
 
-# Model for the Availability object (now grouped by location)
 class VolleyField(BaseModel):
-    location: Location
-    slots: List[Slot]
+    id: str | None = None
+    name: str | None = None
+    location: Location | None = None
+    slots: list[Slot]
+
+    @model_validator(mode="after")
+    def require_court_or_location(self) -> "VolleyField":
+        if self.id is None and self.location is None:
+            raise ValueError("availability must have court id or location")
+        return self
+
+    @property
+    def booking_field_id(self) -> str | None:
+        return self.id
+
+    @property
+    def display_name(self) -> str:
+        if self.name is not None:
+            return self.name
+        if self.location is not None:
+            return self.location.name
+        return "unknown"
 
 
-# Model for the main response
 class ApiResponse(BaseModel):
-    availabilities: List[VolleyField]
+    overDailyQuota: bool = False
+    overWeeklyQuota: bool = False
+    availabilities: list[VolleyField]
 
 
 class ReservationRequest(BaseModel):

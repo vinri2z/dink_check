@@ -1,0 +1,22 @@
+{
+  "overDailyQuota": false,
+  "overWeeklyQuota": false,
+  "availabilities": [
+    {
+      "location": {
+        "id": "acc9fc91-d427-11ef-8000-000000000000",
+        "name": "Instalación Municipal de Vóley Playa - Beachbol Valencia"
+      },
+      "slots": [
+        {
+          "startAt": "2026-06-02T16:30:00",
+          "price": 0
+        },
+        {
+          "startAt": "2026-06-02T17:00:00",
+          "price": 0
+        }
+      ]
+    }
+  ]
+}

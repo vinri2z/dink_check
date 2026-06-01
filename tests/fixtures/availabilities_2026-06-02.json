@@ -1,0 +1,128 @@
+{
+  "overDailyQuota": false,
+  "overWeeklyQuota": false,
+  "availabilities": [
+    {
+      "id": "d3566cef-3e43-4ba0-93b6-2a3f02c6a4ea",
+      "name": "PISTA 16",
+      "slots": [
+        {
+          "startAt": "2026-06-02T16:00:00",
+          "price": 0
+        }
+      ]
+    },
+    {
+      "id": "4fae03ee-7864-4750-ad01-e63c9a893715",
+      "name": "PISTA 17",
+      "slots": [
+        {
+          "startAt": "2026-06-02T16:00:00",
+          "price": 0
+        },
+        {
+          "startAt": "2026-06-02T16:30:00",
+          "price": 0
+        },
+        {
+          "startAt": "2026-06-02T17:00:00",
+          "price": 0
+        }
+      ]
+    },
+    {
+      "id": "2ab7af51-13ac-4510-bdca-ebce3954c623",
+      "name": "PISTA 21",
+      "slots": [
+        {
+          "startAt": "2026-06-02T16:00:00",
+          "price": 0
+        },
+        {
+          "startAt": "2026-06-02T16:30:00",
+          "price": 0
+        }
+      ]
+    },
+    {
+      "id": "9e136bfc-665c-443f-bfdc-b77b13074aed",
+      "name": "PISTA 24",
+      "slots": [
+        {
+          "startAt": "2026-06-02T16:00:00",
+          "price": 0
+        },
+        {
+          "startAt": "2026-06-02T16:30:00",
+          "price": 0
+        }
+      ]
+    },
+    {
+      "id": "5d8f555b-c4ee-4467-92eb-82db5079c6bb",
+      "name": "PISTA 26",
+      "slots": [
+        {
+          "startAt": "2026-06-02T16:00:00",
+          "price": 0
+        }
+      ]
+    },
+    {
+      "id": "c484d349-0da6-49e3-a51a-404358a25e2b",
+      "name": "PISTA 27",
+      "slots": [
+        {
+          "startAt": "2026-06-02T16:00:00",
+          "price": 0
+        }
+      ]
+    },
+    {
+      "id": "dd286bda-d721-4cde-9c8e-66d18f9315e4",
+      "name": "PISTA 28",
+      "slots": [
+        {
+          "startAt": "2026-06-02T16:00:00",
+          "price": 0
+        },
+        {
+          "startAt": "2026-06-02T16:30:00",
+          "price": 0
+        }
+      ]
+    },
+    {
+      "id": "598a2023-10aa-4cfa-9b7e-9f5ab3010842",
+      "name": "PISTA 29",
+      "slots": [
+        {
+          "startAt": "2026-06-02T16:00:00",
+          "price": 0
+        },
+        {
+          "startAt": "2026-06-02T16:30:00",
+          "price": 0
+        },
+        {
+          "startAt": "2026-06-02T17:00:00",
+          "price": 0
+        }
+      ]
+    },
+    {
+      "id": "1518da67-5ace-4301-b085-c8fc3ca3af62",
+      "name": "PISTA 30",
+      "slots": [
+        {
+          "startAt": "2026-06-02T16:00:00",
+          "price": 0
+        },
+        {
+          "startAt": "2026-06-02T16:30:00",
+          "price": 0
+        }
+      ]
+    }
+  ]
+}

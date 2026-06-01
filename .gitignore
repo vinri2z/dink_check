@@ -4,6 +4,8 @@ venv
 .env*
 !.env.example
 .dink_session.json
+.dink_auth_capture.jsonl
+.cursor/
 
 __pycache__/
 .ruff_cache/
