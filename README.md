@@ -8,7 +8,7 @@ This is a simple Python script to **automatically book a field** on [Dink](https
 
 - Python 3.12+
 - [uv](https://docs.astral.sh/uv/) (`brew install uv`)
-- `./install.sh` runs `uv sync` to install dependencies and the package
+- `uv sync` installs dependencies and the package
 
 ---
 
@@ -35,7 +35,20 @@ This is a simple Python script to **automatically book a field** on [Dink](https
    ```bash
    uv run python -m dink_check
    ```
-   
+
+---
+
+## Deploy on Railway
+
+This bot is a **long-running worker** (no HTTP port). Use the **Railpack** builder with the repo root as the service root (`pyproject.toml` and `uv.lock` must be at that root).
+
+[`railpack.json`](railpack.json) sets the start command to `dink-check` (same as `uv run dink-check` locally). To override without changing the repo, set `RAILPACK_START_CMD=dink-check` on the service.
+
+1. Create a Railway service from this repo (builder: **Railpack**).
+2. Set environment variables (see [`.env.example`](.env.example)) — at minimum either `DINK_EMAIL` and `DINK_PASSWORD`, or `BEARER_TOKEN` and `FINGERPRINT`, plus booking settings such as `DATE`, `START_TIME`, and `END_TIME`.
+3. Deploy. After changing `railpack.json`, use **Redeploy without cache** once.
+4. Confirm deploy logs show `App started` from the booking loop.
+
 ---
 
 ## 🔐 Environment Variables
